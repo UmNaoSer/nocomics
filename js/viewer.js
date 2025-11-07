@@ -4,9 +4,11 @@ class ComicViewer {
         this.currentPageIndex = 0;
         this.isPlaying = false;
         this.isFirstPage = true;
+        this.isTransitioning = false;
         
         // Elementos do DOM
         this.videoPlayer = document.getElementById('video-player');
+        this.preloadPlayer = document.getElementById('preload-player');
         this.prevButton = document.getElementById('prev-page');
         this.nextButton = document.getElementById('next-page');
         this.playPauseButton = document.getElementById('play-pause');
@@ -91,20 +93,35 @@ class ComicViewer {
         const videoPath = this.currentComic.pages[this.currentPageIndex];
         console.log('Carregando vídeo:', videoPath);
         
+        // Se estiver em transição, use o player de pré-carregamento
+        if (this.isTransitioning) {
+            // Troque os players
+            [this.videoPlayer, this.preloadPlayer] = [this.preloadPlayer, this.videoPlayer];
+            this.videoPlayer.style.opacity = '1';
+            this.videoPlayer.style.visibility = 'visible';
+            this.preloadPlayer.style.opacity = '0';
+            this.preloadPlayer.style.visibility = 'hidden';
+        } else {
+            // Carregamento inicial
+            this.videoPlayer.src = videoPath;
+        }
+        
         // Reset video properties
         this.videoPlayer.pause();
         if (this.isFirstPage) {
             this.videoPlayer.currentTime = 0;
         } else {
-            // Para outros vídeos, comece do início e reproduza automaticamente
             this.videoPlayer.currentTime = 0;
+            // Reproduzir automaticamente se não for a primeira página
+            this.videoPlayer.play();
         }
-        
-        this.videoPlayer.src = videoPath;
         
         // Update UI
         this.updateCurrentPage();
         this.updateControls();
+        
+        // Começar a pré-carregar o próximo vídeo
+        this.preloadNextVideo();
         
         // Add event listeners for debugging
         this.videoPlayer.addEventListener('loadedmetadata', () => {
@@ -124,12 +141,17 @@ class ComicViewer {
         this.nextButton.disabled = this.currentPageIndex === this.currentComic.pages.length - 1;
     }
     
-    preloadNextPage() {
+    preloadNextVideo() {
         if (this.currentPageIndex < this.currentComic.pages.length - 1) {
-            const nextVideo = document.createElement('video');
-            nextVideo.src = this.currentComic.pages[this.currentPageIndex + 1];
-            nextVideo.preload = 'auto';
-            this._preloadedVideo = nextVideo;
+            const nextVideoPath = this.currentComic.pages[this.currentPageIndex + 1];
+            this.preloadPlayer.src = nextVideoPath;
+            this.preloadPlayer.load();
+            
+            // Prepare o próximo vídeo silenciosamente
+            this.preloadPlayer.currentTime = 0;
+            this.isTransitioning = true;
+        } else {
+            this.isTransitioning = false;
         }
     }
     
