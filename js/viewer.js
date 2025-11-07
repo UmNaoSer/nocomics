@@ -77,10 +77,10 @@ class ComicViewer {
         this.totalPagesSpan.textContent = this.currentComic.pages.length;
         this.updateCurrentPage();
         
-        // Configurar event listeners
-    this.prevButton.addEventListener('click', () => this.previousPage());
-    this.nextButton.addEventListener('click', () => this.nextPage());
-    this.playPauseButton.addEventListener('click', () => this.repeatCurrentVideo());
+        // Configurar event listeners (attach once in constructor to avoid re-attachment)
+        if (this.prevButton) this.prevButton.addEventListener('click', (e) => { e.preventDefault(); console.log('prev click current index', this.currentPageIndex); this.previousPage(); });
+        if (this.nextButton) this.nextButton.addEventListener('click', (e) => { e.preventDefault(); console.log('next click current index', this.currentPageIndex); this.nextPage(); });
+        if (this.playPauseButton) this.playPauseButton.addEventListener('click', (e) => { e.preventDefault(); console.log('repeat click current index', this.currentPageIndex); this.repeatCurrentVideo(); });
         
         // Navegação por teclado
         document.addEventListener('keydown', (e) => {
@@ -92,9 +92,9 @@ class ComicViewer {
             }
         });
         
-        // Carregar primeira página
-        this.loadCurrentPage();
-        this.preloadNextVideo();
+    // Carregar primeira página
+    this.loadCurrentPage();
+    this.preloadNextVideo();
     }
     
     async loadCurrentPage() {
@@ -250,7 +250,10 @@ class ComicViewer {
     }
     
     updateCurrentPage() {
-        this.currentPageSpan.textContent = this.currentPageIndex + 1;
+        if (this.currentPageSpan) this.currentPageSpan.textContent = this.currentPageIndex + 1;
+        if (this.totalPagesSpan && this.currentComic && Array.isArray(this.currentComic.pages)) {
+            this.totalPagesSpan.textContent = this.currentComic.pages.length;
+        }
     }
     
     updateControls() {
@@ -262,6 +265,7 @@ class ComicViewer {
         if (this.currentPageIndex > 0) {
             this.currentPageIndex--;
             this.isFirstPage = (this.currentPageIndex === 0);
+            this.updateCurrentPage();
             this.loadCurrentPage();
             this.preloadNextVideo();
         }
@@ -271,6 +275,7 @@ class ComicViewer {
         if (this.currentPageIndex < this.currentComic.pages.length - 1) {
             this.currentPageIndex++;
             this.isFirstPage = false;
+            this.updateCurrentPage();
             this.loadCurrentPage();
             this.preloadNextVideo();
         }

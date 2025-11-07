@@ -2,12 +2,12 @@
 const comics = [
     {
         id: 1,
-        title: 'Sand',
+        title: 'sand',
         thumbnail: 'assets/thumbnails/sand.jpg',
         pages: [
-            'assets/comics/Sand/Frame 1.mp4',
-            'assets/comics/Sand/Frame 2.mp4',
-            'assets/comics/Sand/Frame 3.mp4'
+            'assets/comics/sand/Frame 1.mp4',
+            'assets/comics/sand/Frame 2.mp4',
+            'assets/comics/sand/Frame 3.mp4'
         ]
     }
 ];
