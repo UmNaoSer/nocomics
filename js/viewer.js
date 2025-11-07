@@ -4,7 +4,16 @@ class ComicViewer {
         this.currentPageIndex = 0;
         this.videoPlayer = document.getElementById('video-player');
         this.prevButton = document.getElementById('prev-page');
-        this.nextButton = document.getElementById('next-button');
+        this.nextButton = document.getElementById('next-page'); // Corrigido de next-button para next-page
+        
+        // Adicionar event listeners para debug
+        this.videoPlayer.addEventListener('error', (e) => {
+            console.error('Erro no vídeo:', e.target.error);
+        });
+        
+        this.videoPlayer.addEventListener('loadeddata', () => {
+            console.log('Vídeo carregado com sucesso');
+        });
         
         this.initializeViewer();
     }
@@ -36,8 +45,15 @@ class ComicViewer {
     }
     
     loadCurrentPage() {
-        this.videoPlayer.src = this.currentComic.pages[this.currentPageIndex];
-        this.videoPlayer.play();
+        const videoPath = this.currentComic.pages[this.currentPageIndex];
+        console.log('Carregando vídeo:', videoPath);
+        
+        this.videoPlayer.src = videoPath;
+        
+        // Tentar reproduzir o vídeo
+        this.videoPlayer.play().catch(error => {
+            console.error('Erro ao reproduzir o vídeo:', error);
+        });
         
         // Update button states
         this.prevButton.disabled = this.currentPageIndex === 0;
