@@ -23,24 +23,6 @@ class ComicViewer {
         
         this.initializeViewer();
     }
-    constructor() {
-        this.currentComic = JSON.parse(localStorage.getItem('currentComic'));
-        this.currentPageIndex = 0;
-        this.videoPlayer = document.getElementById('video-player');
-        this.prevButton = document.getElementById('prev-page');
-        this.nextButton = document.getElementById('next-page'); // Corrigido de next-button para next-page
-        
-        // Adicionar event listeners para debug
-        this.videoPlayer.addEventListener('error', (e) => {
-            console.error('Erro no vídeo:', e.target.error);
-        });
-        
-        this.videoPlayer.addEventListener('loadeddata', () => {
-            console.log('Vídeo carregado com sucesso');
-        });
-        
-        this.initializeViewer();
-    }
     
     initializeViewer() {
         if (!this.currentComic) {
