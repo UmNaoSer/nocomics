@@ -87,8 +87,27 @@ header {
     top: 0;
     left: 0;
     z-index: 1;
-    -webkit-filter: brightness(1) !important;
-    filter: brightness(1) !important;
+    opacity: 1 !important;
+    -webkit-filter: none !important;
+    filter: none !important;
+}
+
+/* Prevenir qualquer tipo de esmaecimento */
+#video-player::-webkit-media-controls,
+#video-player::--webkit-media-controls-overlay-play-button,
+#video-player::-webkit-media-controls-play-button {
+    opacity: 1 !important;
+    filter: none !important;
+    -webkit-filter: none !important;
+}
+
+#video-player.ended,
+#video-player.paused,
+#video-player[ended],
+#video-player[paused] {
+    opacity: 1 !important;
+    filter: none !important;
+    -webkit-filter: none !important;
 }
 
 .controls {

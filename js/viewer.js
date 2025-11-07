@@ -32,6 +32,11 @@ class ComicViewer {
             if (currentTime > 0) {
                 this.videoPlayer.currentTime = currentTime - 0.01;
             }
+
+            // Forçar opacidade total
+            this.videoPlayer.style.opacity = '1';
+            this.videoPlayer.style.filter = 'none';
+            this.videoPlayer.style.webkitFilter = 'none';
         });
         
         this.videoPlayer.addEventListener('play', () => {
