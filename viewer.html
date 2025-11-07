@@ -30,10 +30,20 @@
                    disablePictureInPicture>
             </video>
         </div>
+        <!-- Background music that should loop and persist while viewer is open -->
+        <audio id="bg-music" loop crossorigin="anonymous">
+            <!-- add your loop file at assets/music/loop.mp3 -->
+            <source src="assets/music/loop.mp3" type="audio/mpeg">
+        </audio>
+
+        <!-- Overlay prompt shown when autoplay with audio is blocked -->
+        <div id="audio-prompt" style="display:none;">
+            Toque para ativar o áudio
+        </div>
         
         <div class="controls">
             <button id="prev-page" class="nav-button">&larr; Anterior</button>
-            <button id="play-pause" class="nav-button">Reproduzir</button>
+            <button id="play-pause" class="nav-button">Repetir</button>
             <button id="next-page" class="nav-button">Próximo &rarr;</button>
         </div>
         
