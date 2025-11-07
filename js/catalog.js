@@ -1,16 +1,14 @@
-// Sample comic data - replace with your own comics
+// Comics data
 const comics = [
     {
         id: 1,
-        title: 'Comic Title 1',
-        thumbnail: 'assets/thumbnail1.jpg',
+        title: 'Sand',
+        thumbnail: 'assets/thumbnails/sand.jpg',
         pages: [
-            'assets/comic1/page1.mp4',
-            'assets/comic1/page2.mp4',
-            // Add more pages as needed
+            'assets/comics/Sand/Frame 1.mp4',
+            'assets/comics/Sand/Frame 2.mp4'
         ]
-    },
-    // Add more comics as needed
+    }
 ];
 
 function createComicCard(comic) {
