@@ -12,7 +12,7 @@
     button { margin-top: 1.5rem; padding: 0.7rem 1.2rem; border-radius: 8px; border: none; background: #0a7; color: #fff; font-weight: bold; cursor: pointer; }
     .msg { margin-top: 1rem; color: #0a7; }
   </style>
-</head>
+</head>./PHP-8.4.14/php.exe -S localhost:8000
 <body>
   <div class="admin-form">
     <h2>Adicionar Nova Comic</h2>
@@ -37,20 +37,18 @@
       <label>Escolha a Comic
         <select name="comic_folder" required>
           <?php
-          // Lê o catalog.js para listar apenas comics cadastradas
-          $catalog_path = __DIR__ . '/js/catalog.js';
-          $comics = [];
-          if (file_exists($catalog_path)) {
-            $catalog = file_get_contents($catalog_path);
-            preg_match_all("/folder: '([^']+)'/", $catalog, $matches);
-            $comics = $matches[1];
-          }
+          $comics = glob(__DIR__ . '/assets/comics/*', GLOB_ONLYDIR);
+          // DEBUG: Exibir resultado do glob
+          echo '<div style="color:yellow; background:#333; padding:8px; margin:8px 0; font-size:0.9em;">DEBUG: Encontrado: <pre>';
+          print_r($comics);
+          echo '</pre></div>';
           if ($comics && count($comics) > 0) {
-            foreach ($comics as $name) {
+            foreach ($comics as $comic) {
+              $name = basename($comic);
               echo "<option value='" . htmlspecialchars($name) . "'>" . htmlspecialchars($name) . "</option>";
             }
           } else {
-            echo "<option value='' disabled>Nenhuma comic cadastrada no catálogo</option>";
+            echo "<option value='' disabled>Nenhuma comic encontrada</option>";
           }
           ?>
         </select>

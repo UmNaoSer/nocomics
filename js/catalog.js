@@ -1,6 +1,15 @@
 // Simple comics data (edit this array to add/remove comics)
 const comics = [
     {
+        id: 2,
+        title: 'um',
+        thumbnail: 'assets/thumbnails/um.jpg',
+        pages: [
+            'assets/comics/um/Frame 1.mp4'
+        ]
+    },
+
+    {
         id: 1,
         title: 'sand',
         thumbnail: 'assets/thumbnails/sand.jpg',
