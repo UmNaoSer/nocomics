@@ -3,6 +3,7 @@ class ComicViewer {
         this.currentComic = JSON.parse(localStorage.getItem('currentComic'));
         this.currentPageIndex = 0;
         this.isPlaying = false;
+        this.isFirstPage = true;
         
         // Elementos do DOM
         this.videoPlayer = document.getElementById('video-player');
@@ -20,6 +21,11 @@ class ComicViewer {
         this.videoPlayer.addEventListener('loadeddata', () => {
             console.log('Vídeo carregado com sucesso');
             this.updatePlayPauseButton();
+
+            // Se não for a primeira página, reproduz automaticamente
+            if (!this.isFirstPage) {
+                this.videoPlayer.play();
+            }
         });
 
         this.videoPlayer.addEventListener('ended', () => {
@@ -28,9 +34,8 @@ class ComicViewer {
             this.updatePlayPauseButton();
             
             // Manter o último frame
-            const currentTime = this.videoPlayer.duration;
-            if (currentTime > 0) {
-                this.videoPlayer.currentTime = currentTime - 0.01;
+            if (this.videoPlayer.duration > 0) {
+                this.videoPlayer.currentTime = this.videoPlayer.duration;
             }
 
             // Forçar opacidade total
@@ -88,7 +93,13 @@ class ComicViewer {
         
         // Reset video properties
         this.videoPlayer.pause();
-        this.videoPlayer.currentTime = 0;
+        if (this.isFirstPage) {
+            this.videoPlayer.currentTime = 0;
+        } else {
+            // Para outros vídeos, comece do início e reproduza automaticamente
+            this.videoPlayer.currentTime = 0;
+        }
+        
         this.videoPlayer.src = videoPath;
         
         // Update UI
@@ -146,6 +157,7 @@ class ComicViewer {
     previousPage() {
         if (this.currentPageIndex > 0) {
             this.currentPageIndex--;
+            this.isFirstPage = (this.currentPageIndex === 0);
             this.loadCurrentPage();
             this.preloadNextPage();
         }
@@ -154,8 +166,20 @@ class ComicViewer {
     nextPage() {
         if (this.currentPageIndex < this.currentComic.pages.length - 1) {
             this.currentPageIndex++;
+            this.isFirstPage = false;
             this.loadCurrentPage();
             this.preloadNextPage();
+        }
+    }
+    
+    togglePlayPause() {
+        if (this.videoPlayer.paused) {
+            this.videoPlayer.play();
+            if (this.isFirstPage) {
+                this.isFirstPage = false;
+            }
+        } else {
+            this.videoPlayer.pause();
         }
     }
 }
