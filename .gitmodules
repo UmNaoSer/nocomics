@@ -1,0 +1,3 @@
+[submodule "quickcomics"]
+	path = quickcomics
+	url = https://github.com/kakul/QuickComics
