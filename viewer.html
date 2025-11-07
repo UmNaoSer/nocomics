@@ -10,19 +10,24 @@
 <body class="viewer-page">
     <div id="comic-viewer">
         <button id="back-to-catalog" class="nav-button back-button" onclick="window.location.href='index.html'">&larr; Voltar ao Catálogo</button>
+        
         <video id="video-player" 
                preload="auto" 
-               controls 
                playsinline
-               autoplay
-               muted
+               preservesPitch
                style="background: #000;"
-               poster="">
+               data-keepframe="true">
             Your browser does not support the video element.
         </video>
+        
         <div class="controls">
-            <button id="prev-page" class="nav-button">&lt; Previous</button>
-            <button id="next-page" class="nav-button">Next &gt;</button>
+            <button id="prev-page" class="nav-button">&larr; Anterior</button>
+            <button id="play-pause" class="nav-button">Reproduzir</button>
+            <button id="next-page" class="nav-button">Próximo &rarr;</button>
+        </div>
+        
+        <div class="page-info">
+            Página <span id="current-page">1</span> de <span id="total-pages">2</span>
         </div>
     </div>
     <script src="js/viewer.js"></script>

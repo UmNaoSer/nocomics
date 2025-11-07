@@ -2,23 +2,46 @@ class ComicViewer {
     constructor() {
         this.currentComic = JSON.parse(localStorage.getItem('currentComic'));
         this.currentPageIndex = 0;
+        this.isPlaying = false;
+        
+        // Elementos do DOM
         this.videoPlayer = document.getElementById('video-player');
         this.prevButton = document.getElementById('prev-page');
         this.nextButton = document.getElementById('next-page');
-        this._preloadedVideo = null;
+        this.playPauseButton = document.getElementById('play-pause');
+        this.currentPageSpan = document.getElementById('current-page');
+        this.totalPagesSpan = document.getElementById('total-pages');
         
-        // Event listeners para debug e gerenciamento do vídeo
+        // Event listeners para o vídeo
         this.videoPlayer.addEventListener('error', (e) => {
             console.error('Erro no vídeo:', e.target.error);
         });
         
         this.videoPlayer.addEventListener('loadeddata', () => {
             console.log('Vídeo carregado com sucesso');
+            this.updatePlayPauseButton();
         });
 
         this.videoPlayer.addEventListener('ended', () => {
-            console.log('Vídeo terminou, indo para o próximo');
-            this.nextPage();
+            console.log('Vídeo terminou');
+            this.isPlaying = false;
+            this.updatePlayPauseButton();
+            
+            // Manter o último frame
+            const currentTime = this.videoPlayer.duration;
+            if (currentTime > 0) {
+                this.videoPlayer.currentTime = currentTime - 0.01;
+            }
+        });
+        
+        this.videoPlayer.addEventListener('play', () => {
+            this.isPlaying = true;
+            this.updatePlayPauseButton();
+        });
+        
+        this.videoPlayer.addEventListener('pause', () => {
+            this.isPlaying = false;
+            this.updatePlayPauseButton();
         });
         
         this.initializeViewer();
@@ -30,23 +53,27 @@ class ComicViewer {
             return;
         }
         
-        // Set up event listeners
+        // Configurar contadores de página
+        this.totalPagesSpan.textContent = this.currentComic.pages.length;
+        this.updateCurrentPage();
+        
+        // Configurar event listeners
         this.prevButton.addEventListener('click', () => this.previousPage());
         this.nextButton.addEventListener('click', () => this.nextPage());
+        this.playPauseButton.addEventListener('click', () => this.togglePlayPause());
         
-        // Add click on video for next page
-        this.videoPlayer.addEventListener('click', () => this.nextPage());
-        
-        // Add keyboard navigation
+        // Navegação por teclado
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowLeft') this.previousPage();
             if (e.key === 'ArrowRight') this.nextPage();
+            if (e.key === ' ') {
+                e.preventDefault();
+                this.togglePlayPause();
+            }
         });
         
-        // Load first page
+        // Carregar primeira página
         this.loadCurrentPage();
-        
-        // Preload next page
         this.preloadNextPage();
     }
     
@@ -58,6 +85,10 @@ class ComicViewer {
         this.videoPlayer.pause();
         this.videoPlayer.currentTime = 0;
         this.videoPlayer.src = videoPath;
+        
+        // Update UI
+        this.updateCurrentPage();
+        this.updateControls();
         
         // Add event listeners for debugging
         this.videoPlayer.addEventListener('loadedmetadata', () => {
@@ -71,17 +102,6 @@ class ComicViewer {
         this.videoPlayer.addEventListener('playing', () => {
             console.log('Vídeo começou a reproduzir');
         });
-
-        // Tentar reproduzir o vídeo
-        const playPromise = this.videoPlayer.play();
-        if (playPromise !== undefined) {
-            playPromise.catch(error => {
-                console.error('Erro ao reproduzir o vídeo:', error);
-                // Tentar reproduzir novamente com mute
-                this.videoPlayer.muted = true;
-                this.videoPlayer.play().catch(e => console.error('Erro mesmo com mute:', e));
-            });
-        }
         
         // Update button states
         this.prevButton.disabled = this.currentPageIndex === 0;
@@ -93,9 +113,29 @@ class ComicViewer {
             const nextVideo = document.createElement('video');
             nextVideo.src = this.currentComic.pages[this.currentPageIndex + 1];
             nextVideo.preload = 'auto';
-            // Mantenha o vídeo na memória
             this._preloadedVideo = nextVideo;
         }
+    }
+    
+    togglePlayPause() {
+        if (this.videoPlayer.paused) {
+            this.videoPlayer.play();
+        } else {
+            this.videoPlayer.pause();
+        }
+    }
+    
+    updatePlayPauseButton() {
+        this.playPauseButton.textContent = this.isPlaying ? 'Pausar' : 'Reproduzir';
+    }
+    
+    updateCurrentPage() {
+        this.currentPageSpan.textContent = this.currentPageIndex + 1;
+    }
+    
+    updateControls() {
+        this.prevButton.disabled = this.currentPageIndex === 0;
+        this.nextButton.disabled = this.currentPageIndex === this.currentComic.pages.length - 1;
     }
     
     previousPage() {
