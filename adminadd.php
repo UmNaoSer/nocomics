@@ -38,23 +38,34 @@ if (isset($_FILES['frame'])) {
             // Atualiza o catalog.js
             $catalog_path = "$base/js/catalog.js";
             $catalog = file_get_contents($catalog_path);
-            if (strpos($catalog, "'$comic_folder'") === false) {
+
+            // Atualizar a entrada existente ou criar nova
+            $pages = [];
+            foreach (glob($frames_dir . 'Frame *.mp4') as $f) {
+                $pages[] = str_replace($base . '/', '', $f);
+            }
+            sort($pages, SORT_NATURAL);
+            $pages_js = "[\n            '" . implode("',\n            '", $pages) . "'\n        ]";
+
+            if (preg_match('/title:\s*[\'"]' . preg_quote($comic_folder, '/') . '[\'"].*?pages:\s*\[(.*?)\]/s', $catalog, $matches)) {
+                // Comic existe, atualizar suas páginas
+                $catalog = preg_replace(
+                    '/title:\s*[\'"]' . preg_quote($comic_folder, '/') . '[\'"].*?pages:\s*\[(.*?)\]/s',
+                    "title: '$comic_folder',\n        thumbnail: 'assets/thumbnails/$comic_folder.jpg',\n        pages: $pages_js",
+                    $catalog
+                );
+            } else {
+                // Comic não existe, criar nova entrada
                 if (preg_match_all('/id:\s*(\d+)/', $catalog, $ids)) {
                     $max_id = max($ids[1]);
                     $new_id = $max_id + 1;
                 } else {
                     $new_id = 1;
                 }
-                $pages = [];
-                foreach (glob($frames_dir . 'Frame *.mp4') as $f) {
-                    $pages[] = str_replace($base . '/', '', $f);
-                }
-                sort($pages, SORT_NATURAL);
-                $pages_js = "[\n            '" . implode("',\n            '", $pages) . "'\n        ]";
                 $new_entry = "    {\n        id: $new_id,\n        title: '$comic_folder',\n        thumbnail: 'assets/thumbnails/$comic_folder.jpg',\n        pages: $pages_js\n    },\n";
                 $catalog = preg_replace('/const comics = \[/', "const comics = [\n$new_entry", $catalog);
-                file_put_contents($catalog_path, $catalog);
             }
+            file_put_contents($catalog_path, $catalog);
             
             $comic_dir_path = "assets/comics/$comic_folder/";
             $msg = '<div class="msg success">Página adicionada com sucesso à comic <b>' . htmlspecialchars($comic_folder) . '</b>!<br>Diretório: <code>' . $comic_dir_path . '</code></div>';
