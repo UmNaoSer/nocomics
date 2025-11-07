@@ -4,6 +4,30 @@ class ComicViewer {
         this.currentPageIndex = 0;
         this.videoPlayer = document.getElementById('video-player');
         this.prevButton = document.getElementById('prev-page');
+        this.nextButton = document.getElementById('next-page');
+        this._preloadedVideo = null;
+        
+        // Event listeners para debug e gerenciamento do vídeo
+        this.videoPlayer.addEventListener('error', (e) => {
+            console.error('Erro no vídeo:', e.target.error);
+        });
+        
+        this.videoPlayer.addEventListener('loadeddata', () => {
+            console.log('Vídeo carregado com sucesso');
+        });
+
+        this.videoPlayer.addEventListener('ended', () => {
+            console.log('Vídeo terminou, indo para o próximo');
+            this.nextPage();
+        });
+        
+        this.initializeViewer();
+    }
+    constructor() {
+        this.currentComic = JSON.parse(localStorage.getItem('currentComic'));
+        this.currentPageIndex = 0;
+        this.videoPlayer = document.getElementById('video-player');
+        this.prevButton = document.getElementById('prev-page');
         this.nextButton = document.getElementById('next-page'); // Corrigido de next-button para next-page
         
         // Adicionar event listeners para debug
@@ -84,9 +108,11 @@ class ComicViewer {
     
     preloadNextPage() {
         if (this.currentPageIndex < this.currentComic.pages.length - 1) {
-            const nextVideo = new Video();
+            const nextVideo = document.createElement('video');
             nextVideo.src = this.currentComic.pages[this.currentPageIndex + 1];
             nextVideo.preload = 'auto';
+            // Mantenha o vídeo na memória
+            this._preloadedVideo = nextVideo;
         }
     }
     
