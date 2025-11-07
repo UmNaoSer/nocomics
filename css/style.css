@@ -1,0 +1,94 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1a1a1a;
+    color: #ffffff;
+}
+
+header {
+    padding: 2rem;
+    text-align: center;
+    background-color: #2d2d2d;
+}
+
+#comic-catalog {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 2rem;
+    padding: 2rem;
+}
+
+.comic-card {
+    background-color: #2d2d2d;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s;
+    cursor: pointer;
+}
+
+.comic-card:hover {
+    transform: scale(1.05);
+}
+
+.comic-card img {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+}
+
+.comic-info {
+    padding: 1rem;
+}
+
+.comic-info h3 {
+    margin-bottom: 0.5rem;
+}
+
+/* Viewer Page Styles */
+.viewer-page {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #000;
+}
+
+#comic-viewer {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+#video-player {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.controls {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 1rem;
+}
+
+.nav-button {
+    padding: 0.5rem 1rem;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.nav-button:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
